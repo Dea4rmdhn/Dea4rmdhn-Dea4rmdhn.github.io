@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Animated Song Lyrics</title>
+    <style>
+
+        .heart-button {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100px;
+            height: 100px;
+            background: pink;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            padding: 15px;
+            box-shadow: 0 0 15px rgba(255, 192, 203, 0.7);
+            animation: pulse 1.5s infinite;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .heart-button:hover {
+            transform: translate(-50%, -50%) scale(1.1);
+            background: #ff69b4;
+        }
+
+        .heart-button::before, 
+        .heart-button::after {
+            content: '';
+            position: absolute;
+            top: 40px;
+            width: 50px;
+            height: 80px;
+            border-radius: 50px 50px 0 0;
+            background: currentColor;
+            color: red;
+        }
+
+        .heart-button::before {
+            left: 50px;
+            transform: rotate(-45deg);
+            transform-origin: 0 100%;
+        }
+
+        .heart-button::after {
+            left: 0;
+            transform: rotate(45deg);
+            transform-origin: 100% 100%;
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 15px rgba(255, 192, 203, 0.7);
+            }
+            50% {
+                box-shadow: 0 0 25px rgba(255, 192, 203, 0.9);
+            }
+            100% {
+                box-shadow: 0 0 15px rgba(255, 192, 203, 0.7);
+            }
+        }
+
+        .heart-text {
+            position: absolute;
+            width: 100%;
+            text-align: center;
+            top: 120%;
+            left: 50%;
+            transform: translateX(-50%);
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            font-family: 'Comic Sans MS';
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+        }
+        body {
+            background-image: url('ho.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            font-family: Comic Sans MS;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color:  #000000;
+            overflow: hidden;
+        }
+        #lyrics-container {
+            background-color: rgba(0, 0, 0, 0.7); /* Warna hitam dengan transparansi */
+            padding: 20px; /* Ruang di dalam kotak */
+            border-radius: 10px; /* Sudut melengkung */
+            text-align: center;
+            font-size: 24px;
+            white-space: pre-wrap;
+            color: white;
+            max-width: 600px;
+            width: 100%;
+            z-index: 10;
+        }
+        #lyric-line {
+            margin-bottom: 20px; /* Menambah jarak antar lirik */
+            line-height: 1.5; /* Mengatur jarak antar baris dalam satu lirik */
+            animation: fadeIn 1s ease-in;
+            opacity: 0;
+            transition: opacirty 0.5s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .love-bubble {
+            position: absolute;
+            background-color: rgba(255, 192, 203, 0.7);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 20px;
+            animation: float 15s linear infinite;
+        }
+        @keyframes float {
+            0% { transform: translateY(100vh) scale(0); }
+            100% { transform: translateY(-100vh) scale(1); }
+        }
+        #audio-player {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+    </style>
+</head>
+<body>
+    <div id="lyrics-container"></div>
+    <audio id="audio-player" autoplay loop>
+        <source src="abt you.mp3" type="audio/mpeg"> 
+        Your browser does not support the audio element.
+    </audio>
+
+    <button id="play-button" class="heart-button" style="display: none;">
+        <span class="heart-text">Click Sayang!</span>
+    </button>
+
+    <script>
+        const lyrics = [
+            { text:"Do you think I have forgotten?", delay: 900 },
+            { text: "Do you think I have forgotten?", delay: 4000 },
+            { text: "Do you think I have forgotten?", delay: 5000 },
+            { text: "About you?", delay: 5000 },
+            { text: "There was something bout you that now I cant remember", delay: 6000 },
+            { text: "Its the same damn thing that made my heart surrender", delay: 5000 },
+            { text: "And I miss you on a train, I miss you in the morning", delay: 5000 },
+            { text: "I never know what to think about", delay: 5000 },
+            { text: "I think about youuuuuuuuuuuuuuuuuuuuuuuuuuu", delay: 4000 },
+            { text: "About you", delay: 6000 },
+            { text: "Do you think I have forgotten", delay: 5000 },
+            { text: "About you?", delay: 5000 },
+        ];  
+
+        async function singLyrics() {
+            const container = document.getElementById('lyrics-container');
+        container.innerHTML = ''; // Bersihkan container sebelum menambahkan lirik baru
+        for (const lyric of lyrics) {
+            await new Promise(resolve => setTimeout(resolve, lyric.delay));
+            const lyricElement = document.createElement('div');
+            lyricElement.style.fontSize = '24px';
+            lyricElement.textContent = lyric.text;
+            lyricElement.style.opacity = '0'; // Mulai dengan opacity 0
+            container.appendChild(lyricElement);
+            // Tambahkan efek fade in
+            setTimeout(() => {
+                lyricElement.style.opacity = '1';
+            }, 100);
+        }
+    }
+
+    function createLoveBubble() {
+            const bubble = document.createElement('div');
+            bubble.className = 'love-bubble';
+            bubble.textContent = '❤️';
+            bubble.style.left = `${Math.random() * 100}vw`;
+            bubble.style.animationDuration = `${15 + Math.random() * 10}s`;
+            bubble.style.opacity = Math.random();
+            bubble.style.fontSize = `${20 + Math.random() * 30}px`;
+            document.body.appendChild(bubble);
+
+            bubble.addEventListener('animationend', () => {
+                bubble.remove();
+            });
+        }
+
+        function startBubbles() {
+            setInterval(createLoveBubble, 300);
+        }
+    let hasStarted = false; 
+
+    window.onload = function() {
+        var audio = document.getElementById('audio-player');
+        var playButton = document.getElementById('play-button');
+        audio.volume = 0.8; // Atur volume ke 50% (opsional)
+    
+    var playPromise = audio.play();
+
+    // Hentikan autoplay
+    audio.pause();
+        playButton.style.display = 'block';
+
+        playButton.onclick = function() {
+            if (!hasStarted) {
+                hasStarted = true;
+                audio.play();
+                this.style.display = 'none';
+                // Mulai animasi lirik dan gelembung setelah tombol diklik
+                singLyrics();
+                startBubbles();
+            }
+        };
+    };
+    </script>
+</body>
+</html>
